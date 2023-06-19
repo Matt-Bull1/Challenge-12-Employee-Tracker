@@ -12,6 +12,7 @@
     "inquirer": "^8.2.4",
     "mysql2": "^3.3.3",
     "dotenv": "^16.0.3",
-    "sequelize": "^6.31.0"
+    "sequelize": "^6.31.0",
+    "console.table": "^0.10.0"
   }
 }
