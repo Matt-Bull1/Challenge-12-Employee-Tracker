@@ -1,4 +1,5 @@
 //imports 
+const inquirer = require('inquirer');
 const mysql = require("mysql2");
 const dotenv = require("dotenv");
 const { prompt } = require("inquirer");
@@ -29,3 +30,6 @@ function startPrompt(){
     ])
 
 }
+
+//call start function
+startPrompt();
