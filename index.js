@@ -44,6 +44,9 @@ function startPrompt(){
                 case "View All Employees":
                 viewAllEmployees();
                 break;
+                case "Add Department":
+                addDepartment();
+                break;
                 case "Exit":
                 exit();
                 break;
@@ -73,6 +76,8 @@ function startFollowup(){
             }
         })
 }
+
+
 //return the table of departments 
 function viewAllDepartments() {
     const sql = "SELECT * FROM department"
@@ -83,6 +88,7 @@ function viewAllDepartments() {
     });
 }
 
+//return table role
 function viewAllRoles() {
     const sql = "SELECT * FROM role"
     const data = connection.promise().query(sql)
@@ -92,6 +98,7 @@ function viewAllRoles() {
     });
 }
 
+//return table employee
 function viewAllEmployees() {
     const sql = "SELECT * FROM employee"
     const data = connection.promise().query(sql)
@@ -101,7 +108,28 @@ function viewAllEmployees() {
     });
 }
 
+function addDepartment() {
+    prompt([
+        {
+            type: "input",
+            name: "name",
+            message: "What is the name of the Department",
+        }
+        ]).then((data) => {
+            console.log(data.name)
+            const newDepartment = (data.name)
+            const sql = "INSERT INTO department (name) VALUES (?)"
 
+            connection.promise().query(sql, newDepartment);
+
+            console.log(`${newDepartment} added to the Database`);
+
+            startFollowup();
+
+        })
+}
+
+//exit program
 function exit() {
     process.exit(0);
 }
