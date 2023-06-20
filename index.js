@@ -38,19 +38,48 @@ function startPrompt(){
                 case "View All Departments":
                 viewAllDepartments();
                 break;
+                case "Exit":
+                exit();
+                break;
             }
         })
 }
 
+function startFollowup(){
+    prompt([
+        {
+            type: "list",
+            name: "choice",
+            message: "What would you like to do next?",
+            choices: 
+                ["Go Back to Start",
+                "Exit",
+                ]
+            }
+        ]).then((data) => {
+            switch (data.choice) {
+                case "Go Back to Start":
+                startPrompt();
+                break;
+                case "Exit":
+                exit();
+                break;
+            }
+        })
+}
 //return the table of departments 
 function viewAllDepartments() {
     const sql = "SELECT * FROM department"
     const data = connection.promise().query(sql)
     data.then(([data]) => {
         console.table(data);
-        startPrompt();
+        startFollowup();
     });
 }
 
+
+function exit() {
+    process.exit(0);
+}
 //call start function
 startPrompt();
