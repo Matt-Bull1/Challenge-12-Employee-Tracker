@@ -24,6 +24,7 @@ function startPrompt() {
                 ["View All Departments",
                     "View All Roles",
                     "View All Employees",
+                    "View All Employees By Manager",
                     "Add Department",
                     "Remove Department",
                     "Add Role",
@@ -44,6 +45,9 @@ function startPrompt() {
                 break;
             case "View All Employees":
                 viewAllEmployees();
+                break;
+            case "View All Employees By Manager":
+                viewAllEmployeesByManager();
                 break;
             case "Add Department":
                 addDepartment();
@@ -340,6 +344,30 @@ function viewRoleTitles() {
     let table = connection.promise().query("SELECT id, title FROM role")
     table.then(([table]) => {
         console.table(table);
+    })
+}
+
+function viewAllEmployeesByManager() {
+    console.log("3")
+    let data = connection.promise().query("SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL")
+    data.then(([data]) => {
+        console.table(data);
+    })
+    prompt([
+        {
+            type: "input",
+            name: "managerId",
+            message: "Enter the ID of the Manager whose Employees you would like to view",
+        }
+    ]).then((data) => {
+        let manager = [data.managerId]
+        console.log(manager)
+        let sql = "SELECT id, first_name, last_name FROM employee WHERE manager_id = ?"
+        let employeeTable = connection.promise().query(sql, manager)
+        employeeTable.then(([employeeTable]) => {
+            console.table(employeeTable);
+            startFollowup();
+        })
     })
 }
 
