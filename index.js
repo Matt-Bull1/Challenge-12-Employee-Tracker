@@ -53,6 +53,9 @@ function startPrompt(){
                 case "Add Role":
                 addRole();
                 break;
+                case "Remove Role":
+                removeRole();
+                break;
                 case "Exit":
                 exit();
                 break;
@@ -113,6 +116,7 @@ function viewAllEmployees() {
     });
 }
 
+//add Department
 function addDepartment() {
     prompt([
         {
@@ -132,6 +136,58 @@ function addDepartment() {
 
         })
 }
+
+//remove Department
+function removeDepartment() {
+    const data = connection.promise().query("SELECT * FROM department")
+    data.then(([data]) =>{
+        console.table(data);
+    })
+    prompt([
+        {
+            type: "input",
+            name: "remove",
+            message: "Enter the ID of the Department you would like to Remove",
+        }
+        ]).then((data) => {
+            const deleteDepartment = (data.remove)
+            const sql = "DELETE FROM department WHERE id = (?)"
+
+            connection.promise().query(sql, deleteDepartment);
+
+            console.log(`Department removed from the Database`);
+
+            startFollowup();
+
+    })
+}
+
+//Remove Role
+const removeRole = async () => {
+    const data = connection.promise().query("SELECT * FROM role")
+    data.then(([data]) =>{
+        console.table(data);
+    })
+    prompt([
+        {
+            type: "input",
+            name: "remove",
+            message: "Enter the ID of the Role you would like to Remove",
+        }
+        ]).then((data) => {
+            const deleteRole = (data.remove)
+            const sql = "DELETE FROM role WHERE id = (?)"
+
+            connection.promise().query(sql, deleteRole);
+
+            console.log(`Role removed from the Database`);
+
+            startFollowup();
+
+    })
+}
+
+//Add Role
 const addRole = async () =>{
     var table = connection.promise().query("SELECT * FROM department")
     table.then(([table]) =>{
@@ -160,30 +216,6 @@ const addRole = async () =>{
 
         console.log(`${data.title} added to the Database`)
         startFollowup();
-    })
-}
-
-function removeDepartment() {
-    const data = connection.promise().query("SELECT * FROM department")
-    data.then(([data]) =>{
-        console.table(data);
-    })
-    prompt([
-        {
-            type: "input",
-            name: "remove",
-            message: "Enter the ID of the Department you would like to Remove",
-        }
-        ]).then((data) => {
-            const deleteDepartment = (data.remove)
-            const sql = "DELETE FROM department WHERE id = (?)"
-
-            connection.promise().query(sql, deleteDepartment);
-
-            console.log(`Department removed from the Database`);
-
-            startFollowup();
-
     })
 }
 
