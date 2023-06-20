@@ -47,6 +47,9 @@ function startPrompt(){
                 case "Add Department":
                 addDepartment();
                 break;
+                case "Remove Department":
+                removeDepartment();
+                break;
                 case "Exit":
                 exit();
                 break;
@@ -76,7 +79,6 @@ function startFollowup(){
             }
         })
 }
-
 
 //return the table of departments 
 function viewAllDepartments() {
@@ -127,6 +129,30 @@ function addDepartment() {
             startFollowup();
 
         })
+}
+
+function removeDepartment() {
+    const data = connection.promise().query("SELECT * FROM department")
+    data.then(([data]) =>{
+        console.table(data);
+    })
+    prompt([
+        {
+            type: "input",
+            name: "remove",
+            message: "Enter the ID of the Department you would like to Remove",
+        }
+        ]).then((data) => {
+            const deleteDepartment = (data.remove)
+            const sql = "DELETE FROM department WHERE id = (?)"
+
+            connection.promise().query(sql, deleteDepartment);
+
+            console.log(`Department removed from the Database`);
+
+            startFollowup();
+
+    })
 }
 
 //exit program
