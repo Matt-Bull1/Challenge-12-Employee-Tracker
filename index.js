@@ -30,6 +30,7 @@ function startPrompt() {
                     "Remove Role",
                     "Add Employee",
                     "Remove Employee",
+                    "Update Employee",
                     "Exit"
                 ]
         }
@@ -61,6 +62,9 @@ function startPrompt() {
                 break;
             case "Remove Employee":
                 removeEmployee();
+                break;
+            case "Update Employee":
+                updateEmployee();
                 break;
             case "Exit":
                 exit();
@@ -145,10 +149,7 @@ function addDepartment() {
 
 //remove Department
 function removeDepartment() {
-    const data = connection.promise().query("SELECT * FROM department")
-    data.then(([data]) => {
-        console.table(data);
-    })
+    viewAllDepartments()
     prompt([
         {
             type: "input",
@@ -170,10 +171,7 @@ function removeDepartment() {
 
 //Add Role
 const addRole = async () => {
-    var table = connection.promise().query("SELECT * FROM department")
-    table.then(([table]) => {
-        console.table(table);
-    })
+    viewAllDepartments()
     await prompt([
         {
             type: "input",
@@ -202,10 +200,7 @@ const addRole = async () => {
 
 //Remove Role
 const removeRole = async () => {
-    const data = connection.promise().query("SELECT * FROM role")
-    data.then(([data]) => {
-        console.table(data);
-    })
+    viewRoleTitles()
     prompt([
         {
             type: "input",
@@ -227,10 +222,7 @@ const removeRole = async () => {
 
 //Add Employee
 const addEmployee = async () => {
-    let table = connection.promise().query("SELECT id, title FROM role")
-    table.then(([table]) => {
-        console.table(table);
-    })
+    viewRoleTitles()
     await prompt([
         {
             type: "input",
@@ -249,24 +241,105 @@ const addEmployee = async () => {
         },
     ]).then((data) => {
         const newEmployee = [data.firstName, data.lastName, data.roleId]
-        let table = connection.promise().query("SELECT id, first_name, last_name FROM employee")
-        table.then(([table]) => {
-            console.table(table);
-        })
+        viewEmployeeNames()
         prompt([
             {
                 type: "input",
                 name: "manager",
-                message: "Enter the ID of this Employees Manager (Enter for No Manager)",
+                message: "Enter the ID of this Employees Manager (Leave Blank for no Manager)",
             }
         ]).then((data) => {
             newEmployee.push(data.manager)
             const sql = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)"
             connection.promise().query(sql, newEmployee)
 
-            console.log(`${newEmployee[0]} + ${newEmployee[1]} added to database`)
+            console.log(`${newEmployee[0]} ${newEmployee[1]} added to database`)
             startFollowup();
         })
+    })
+}
+
+//removeEmployee
+const removeEmployee = async () => {
+    viewEmployeeNames()
+    prompt([
+        {
+            type: "input",
+            name: "remove",
+            message: "Enter the ID of the Employee you would like to Remove",
+        }
+    ]).then((data) => {
+        const deleteRole = (data.remove)
+        const sql = "DELETE FROM employee WHERE id = (?)"
+
+        connection.promise().query(sql, deleteRole);
+
+        console.log(`Employee removed from the Database`);
+
+        startFollowup();
+
+    })
+}
+
+//updateEmployee
+const updateEmployee = async () => {
+    viewEmployeeNames()
+    await prompt([
+        {
+            type: "input",
+            name: "update",
+            message: "Enter the ID of the Employee you would like to Update",
+        }
+    ]).then((data) => {
+        let update = [data.update]
+        viewRoleTitles()
+    
+        prompt([
+            {
+                type: "input",
+                name: "newRole",
+                message: "What is the ID of their new Role",
+            }
+        ]).then((data) => {
+            update.unshift(data.newRole)
+            let sql = "UPDATE employee SET employee.role_id = ? WHERE employee.id = ?"
+            connection.promise().query(sql, update);
+
+            viewEmployeeNames();     
+         
+            prompt([
+                {
+                    type: "input",
+                    name: "newManager",
+                    message: "Enter the ID of the new Manager",
+                }
+            ]).then((data) => {
+                update.shift()
+                update.unshift(data.newManager)
+                let sql = "UPDATE employee SET employee.manager_id = ? WHERE employee.id = ?"
+                connection.promise().query(sql, update)
+
+                console.log(`Employee Updated`)
+                startFollowup();
+            })
+        }) 
+    })      
+
+}
+
+//console log list of employee ids and names
+function viewEmployeeNames(){
+    const data = connection.promise().query("SELECT id, first_name, last_name FROM employee")
+    data.then(([data]) => {
+        console.table(data);
+    })
+}
+
+//console log list of role id and titles
+function viewRoleTitles() {
+    let table = connection.promise().query("SELECT id, title FROM role")
+    table.then(([table]) => {
+        console.table(table);
     })
 }
 
