@@ -38,6 +38,12 @@ function startPrompt(){
                 case "View All Departments":
                 viewAllDepartments();
                 break;
+                case "View All Roles":
+                viewAllRoles();
+                break;
+                case "View All Employees":
+                viewAllEmployees();
+                break;
                 case "Exit":
                 exit();
                 break;
@@ -70,6 +76,24 @@ function startFollowup(){
 //return the table of departments 
 function viewAllDepartments() {
     const sql = "SELECT * FROM department"
+    const data = connection.promise().query(sql)
+    data.then(([data]) => {
+        console.table(data);
+        startFollowup();
+    });
+}
+
+function viewAllRoles() {
+    const sql = "SELECT * FROM role"
+    const data = connection.promise().query(sql)
+    data.then(([data]) => {
+        console.table(data);
+        startFollowup();
+    });
+}
+
+function viewAllEmployees() {
+    const sql = "SELECT * FROM employee"
     const data = connection.promise().query(sql)
     data.then(([data]) => {
         console.table(data);
