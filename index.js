@@ -50,6 +50,9 @@ function startPrompt(){
                 case "Remove Department":
                 removeDepartment();
                 break;
+                case "Add Role":
+                addRole();
+                break;
                 case "Exit":
                 exit();
                 break;
@@ -118,7 +121,6 @@ function addDepartment() {
             message: "What is the name of the Department",
         }
         ]).then((data) => {
-            console.log(data.name)
             const newDepartment = (data.name)
             const sql = "INSERT INTO department (name) VALUES (?)"
 
@@ -129,6 +131,36 @@ function addDepartment() {
             startFollowup();
 
         })
+}
+const addRole = async () =>{
+    var table = connection.promise().query("SELECT * FROM department")
+    table.then(([table]) =>{
+    console.table(table);
+    })
+    await prompt([
+        {
+            type:"input",
+            name:"departmentId",
+            message: "Enter the ID of the department this role belongs to",
+        },
+        {
+            type:"input",
+            name:"title",
+            message: "What is the Title of the Role"
+        },
+        {
+            type:"input",
+            name:"salary",
+            message: "What is the Salary of the Role"
+        },
+    ]).then((data) =>{
+        const sql = "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)";
+        const newRole = [data.title, data.salary, data.departmentId]
+        connection.promise().query(sql, newRole);
+
+        console.log(`${data.title} added to the Database`)
+        startFollowup();
+    })
 }
 
 function removeDepartment() {
