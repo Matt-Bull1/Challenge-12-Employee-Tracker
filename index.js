@@ -126,7 +126,7 @@ function viewAllRoles() {
 
 //return table employee
 function viewAllEmployees() {
-    const sql = "SELECT * FROM employee"
+    const sql = `SELECT e1.id, e1.first_name, e1.last_name, role.title AS role, department.name AS department, role.salary, CONCAT(m1.first_name, " ", m1.last_name) AS manager FROM employee INNER JOIN role ON role_id = role.id INNER JOIN department ON department_id = department.id INNER JOIN employee e1 ON employee.id = e1.id LEFT JOIN employee m1 ON employee.manager_id = m1.id`;
     const data = connection.promise().query(sql)
     data.then(([data]) => {
         console.table(data);
