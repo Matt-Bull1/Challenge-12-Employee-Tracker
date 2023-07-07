@@ -116,7 +116,7 @@ function viewAllDepartments() {
 
 //return table role
 function viewAllRoles() {
-    const sql = "SELECT * FROM role"
+    const sql = "SELECT  role.id, title, salary, department.name AS department FROM role INNER JOIN department ON department_id = department.id"
     const data = connection.promise().query(sql)
     data.then(([data]) => {
         console.table(data);
