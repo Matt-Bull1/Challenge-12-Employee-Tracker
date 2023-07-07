@@ -25,7 +25,6 @@ function startPrompt() {
                     "View All Roles",
                     "View All Employees",
                     "View All Employees By Manager",
-                    "View All Employees By Department",
                     "Add Department",
                     "Remove Department",
                     "Add Role",
@@ -50,9 +49,6 @@ function startPrompt() {
             case "View All Employees By Manager":
                 viewAllEmployeesByManager();
                 break;
-            case "View All Employees By Department":
-                viewAllEmployeesByDepartment();
-                break
             case "Add Department":
                 addDepartment();
                 break;
@@ -157,7 +153,7 @@ function addDepartment() {
 
 //remove Department
 function removeDepartment() {
-    viewAllDepartments()
+    viewAllDepartmentsNF()
     prompt([
         {
             type: "input",
@@ -179,7 +175,7 @@ function removeDepartment() {
 
 //Add Role
 const addRole = async () => {
-    viewAllDepartments()
+    viewAllDepartmentsNF()
     await prompt([
         {
             type: "input",
@@ -202,8 +198,10 @@ const addRole = async () => {
         connection.promise().query(sql, newRole);
 
         console.log(`${data.title} added to the Database`)
-        startFollowup();
+        startFollowup()
+        
     })
+    
 }
 
 //Remove Role
@@ -371,6 +369,36 @@ function viewAllEmployeesByManager() {
             startFollowup();
         })
     })
+}
+
+//return the table of departments  no followup
+function viewAllDepartmentsNF() {
+    const sql = "SELECT * FROM department"
+    const data = connection.promise().query(sql)
+    data.then(([data]) => {
+        console.table(data);
+
+    });
+}
+
+//return table role no followup
+function viewAllRolesNF() {
+    const sql = "SELECT  role.id, title, salary, department.name AS department FROM role INNER JOIN department ON department_id = department.id"
+    const data = connection.promise().query(sql)
+    data.then(([data]) => {
+        console.table(data);
+
+    });
+}
+
+//return table employee no followup
+function viewAllEmployeesNF() {
+    const sql = `SELECT e1.id, e1.first_name, e1.last_name, role.title AS role, department.name AS department, role.salary, CONCAT(m1.first_name, " ", m1.last_name) AS manager FROM employee INNER JOIN role ON role_id = role.id INNER JOIN department ON department_id = department.id INNER JOIN employee e1 ON employee.id = e1.id LEFT JOIN employee m1 ON employee.manager_id = m1.id`;
+    const data = connection.promise().query(sql)
+    data.then(([data]) => {
+        console.table(data);
+
+    });
 }
 
 //exit program

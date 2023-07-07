@@ -18,6 +18,7 @@
   Download the files and open them in your IDE of choice 
 
   ## Usage
+https://www.youtube.com/watch?v=gZMCUGxP1QY
 
   After you downloaded the files open the terminal and type node.js, there you will be prompted with a selection of options. After you pick one further instructions will be given explaining how to use the program.
 
